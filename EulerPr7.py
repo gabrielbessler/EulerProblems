@@ -1,16 +1,22 @@
-#Find the 100001st prime number
+''' === Problem Statement ===
 
-#We know we only have to check divsors up to the floor function of the root of a number
+Find the 100001st prime number
+'''
 
-#Additionally, we know that pi(x) = x / ln(x)
+# We know we only have to check divsors up to the floor function of the root
+# of a number
 
-#thus, 10001 = x / ln(x), x = 116684. Thus, we know that the upper bound will be < 200,000 (approx).
+# Additionally, we know that pi(x) = x / ln(x)
 
-#Additionally, we know that after checking 2, no even numbers need to be checked.
+# thus, 10001 = x / ln(x), x = 116684. Thus, we know that the upper bound will
+# be < 200,000 (approx).
 
-#Thus, we can run a sieve on 1 - 200000
+# Additionally, we know that after checking 2, no even numbers need to be
+#  checked.
 
-#Here, we'll use the sieve of erastosthenes
+# Thus, we can run a sieve on 1 - 200000
+
+# Here, we'll use the sieve of erastosthenes
 
 from time import time
 
@@ -18,14 +24,16 @@ t = time()
 
 upperBound = 200000
 
-#Our possible primes are odds from 3 to 200,000
-possiblePrimes = list(range(3,200000,2))
+# Our possible primes are odds from 3 to 200,000
+possiblePrimes = list(range(3, 200000, 2))
 
-#Go through all of the possible factors of any of those numbers (3 to 447)
-for i in range(3,1000):
+# Go through all of the possible factors of any of those numbers (3 to 447)
+for i in range(3, 1000):
     if i in possiblePrimes:
-        #could also do this by looping through all of the multiples of i...probably better
-        possiblePrimes = list(filter(lambda x: x % i != 0 or x == i,possiblePrimes))
+        # Could also do this by looping through all of the multiples of i...
+        # probably better
+        possiblePrimes = list(filter(lambda x: x % i != 0 or x == i,
+                                     possiblePrimes))
 
 print(possiblePrimes[0:100])
 

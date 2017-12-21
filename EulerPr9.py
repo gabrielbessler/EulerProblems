@@ -1,9 +1,10 @@
-#There exists exactly one Pythagorean triplet for which a + b + c = 1000.
-#Find the product abc.
+''' === Problem Statement ===
 
-#We know that C > A, B, therefore, A < 500.
+There exists exactly one Pythagorean triplet for which a + b + c = 1000.
+Find the product abc.
+'''
 
-''' Perfect Numbers? '''
+# We know that C > A, B, therefore, A < 500.
 
 from math import sqrt
 import time

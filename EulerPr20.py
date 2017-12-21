@@ -1,4 +1,7 @@
-#Find the sum of the digits in the number 100!
+''' === Problem Statement ===
+
+Find the sum of the digits in the number 100! (100 factorial)
+'''
 
 from math import factorial
 
@@ -11,5 +14,5 @@ for i in str(num):
 print(tot)
 
 
-#Alternative solution on forum:
+# Alternative solution on forum:
 # sum(map(int,str(math.factorial(100))))

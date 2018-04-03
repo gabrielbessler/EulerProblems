@@ -1,6 +1,4 @@
-''' 
-This problem refers to an XOR C
-'''
+import time 
 
 def main(fname = "null", key_size=0): 
     ''' 
@@ -9,13 +7,19 @@ def main(fname = "null", key_size=0):
     if fname != "null": 
         with open(fname, 'r') as f: 
             with open("out.txt", "w") as f2: 
+                st = time.time() 
+
                 count = 0 
                 done = False 
-                MAX_VAL = 127
+                MAX_VAL = 27
                 MAX_VAL_LENGTH = len(str(MAX_VAL))
                 L = [int(x) for x in f.read().split(",")]
                 key = [0] * int(key_size) 
+                
                 while not done: 
+                    
+                    count += 1
+
                     for key_index in range(len(key)): 
                         key[key_index] += 1
                         if key[key_index] > MAX_VAL: 
@@ -25,14 +29,22 @@ def main(fname = "null", key_size=0):
                             continue 
                         else:  
                             break 
+                    
                     key_repr = ['0'*(MAX_VAL_LENGTH-len(str(x))) + str(x) for x in key]
-                    print(f"Key {key_repr}...", end="\r")
+
+                    dif = time.time() - st  
+                    try:
+                        thing = round(count / dif) 
+                    except: 
+                        thing = "NaN"
+
+                    print(f"Key {key_repr}... {thing} Keys Per Second", end="\r")
                     out = do_xor(L, key)
-                    out2 = " "
-                    for x in out: 
-                        out2 += " " + chr(x) 
-                    f2.write(out2)
+                    out = " ".join([chr(x) for x in out])
+
+                    f2.write(out)
                     f2.write('\n')
+    print("DONE!")
 
 def do_xor(L, key_list):
     output = []

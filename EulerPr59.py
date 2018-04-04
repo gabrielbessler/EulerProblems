@@ -79,14 +79,12 @@ def check_alpha_num(L):
             return False 
     return True 
     
-
 def do_xor(L, key_list):
     counter = 0
     output = []
     num_keys = len(key_list)
     output = [L[el_index] ^ key_list[el_index % num_keys] for el_index in range(len(L))]
     return output 
-    
 
 if __name__ == "__main__": 
     fname = input("File Name: ")

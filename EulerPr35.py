@@ -9,11 +9,6 @@ How many circular primes are there below one million?
 
 # We begin by finding all of the primes below 10 million.
 
-import time
-
-start = time.time()
-
-
 maxVal = 2000000
 primeList = list(range(0, maxVal + 1))
 primeList[0:2] = [0, 0]
@@ -56,5 +51,3 @@ for i in L:
         newL.append(i)
 print(len(newL))
 # Remember to add 2 for [2] and [5]
-
-# print("Time: " + str(time.time() - start))

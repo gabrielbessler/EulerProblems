@@ -4,15 +4,30 @@ from math import log10
 
 class XorBreaker(): 
     def __init__(self):
-        #TODO  
         ''' Sets the initial values for the XOR Cipher Breaker ''' 
         self.key_size = 0 
         self.min_val = 97 
         self.max_val = 122 
         self.fname = "null"
+        # Taken from https://en.wikipedia.org/wiki/Letter_frequency
+        self.character_frequencies_dict = {"a": .08167, "b": .01492, "c": .02782, "d": .04253, "e": .12702,
+                              "f": .02228, "g": .02015, "h": .06094, "i": .06966, "j": .00153,
+                              "k": .00772, "l": .04025, "m": .02406, "n": .06749, "o": .07507,
+                              "p": .01929, "q": .00095, "r": .05987, "s": .06327, "t": .09056,
+                              "u": .02758, "v": .00978, "w": .0236, "x": .00150, "y": .01974, 
+                              "z": .00074}
+        self.character_frequencies = defaultdict(int)
+        for key in character_frequencies_dict: 
+            self.character_frequencies[key] = character_frequencies_dict[key]
+
 
 # Taken from https://en.wikipedia.org/wiki/Letter_frequency
-character_frequencies_dict = {"a": .08167, "b": .01492, "c": .02782, "d": .04253, "e": .12702, "f": .02228, "g": .02015, "h": .06094, "i": .06966, "j": .00153, "k": .00772, "l": .04025, "m": .02406, "n": .06749, "o": .07507, "p": .01929, "q": .00095, "r": .05987, "s": .06327, "t": .09056, "u": .02758, "v": .00978, "w": .0236, "x": .00150, "y": .01974, "z": .00074}
+character_frequencies_dict = {"a": .08167, "b": .01492, "c": .02782, "d": .04253, "e": .12702,
+                              "f": .02228, "g": .02015, "h": .06094, "i": .06966, "j": .00153,
+                              "k": .00772, "l": .04025, "m": .02406, "n": .06749, "o": .07507,
+                              "p": .01929, "q": .00095, "r": .05987, "s": .06327, "t": .09056,
+                              "u": .02758, "v": .00978, "w": .0236, "x": .00150, "y": .01974, 
+                              "z": .00074}
 
 character_frequencies = defaultdict(int)
 for key in character_frequencies_dict: 
@@ -44,7 +59,7 @@ def main(fname = "null", key_size=0, min_val=97, max_val=122):
 
                 MAX_VAL_LENGTH = len(str(MAX_VAL))
                 L = [int(x) for x in f.read().split(",")]
-                key = [MIN_VAL] * int(key_size) 
+                key = [MIN_VAL] * key_size
                 
                 while not done: 
                     
@@ -147,7 +162,13 @@ def do_xor(L, key_list):
 
 if __name__ == "__main__": 
     fname = input("File Name: ")
-    key_size = input("Key Size (Enter for Default): ") 
+    while True:
+        try: 
+            key_size = int(input("Key Size (Enter for Default): ")) 
+            if key_size <= 0: 
+                raise ValueError()
+        except: 
+            print("Must be a number")
 
     while True: 
         try: 
@@ -156,6 +177,9 @@ if __name__ == "__main__":
                 min_val = -1  
             else: 
                 min_val = int(min_val)
+                # ASCII key codes must be positive 
+                if min_val < 0:
+                    raise ValueError() 
             break 
         except: 
             print("Must be a number")
@@ -172,6 +196,5 @@ if __name__ == "__main__":
             print("Must be a number")
             
     breaker = XorBreaker()
-
     main(fname, key_size, min_val, max_val) 
     compare_probabilities() 

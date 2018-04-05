@@ -1,4 +1,6 @@
+from collections import defaultdict
 import time 
+from math import log10 
 
 class XorBreaker(): 
     def __init__(self):
@@ -8,6 +10,13 @@ class XorBreaker():
         self.min_val = 97 
         self.max_val = 122 
         self.fname = "null"
+
+# Taken from https://en.wikipedia.org/wiki/Letter_frequency
+character_frequencies_dict = {"a": .08167, "b": .01492, "c": .02782, "d": .04253, "e": .12702, "f": .02228, "g": .02015, "h": .06094, "i": .06966, "j": .00153, "k": .00772, "l": .04025, "m": .02406, "n": .06749, "o": .07507, "p": .01929, "q": .00095, "r": .05987, "s": .06327, "t": .09056, "u": .02758, "v": .00978, "w": .0236, "x": .00150, "y": .01974, "z": .00074}
+
+character_frequencies = defaultdict(int)
+for key in character_frequencies_dict: 
+    character_frequencies[key] = character_frequencies_dict[key]
 
 def main(fname = "null", key_size=0, min_val=97, max_val=122): 
     ''' 
@@ -69,6 +78,55 @@ def main(fname = "null", key_size=0, min_val=97, max_val=122):
         
     print("\nDone!")
 
+
+def compare_probabilities(): 
+    ''' 
+    Calculate the probability of each string of text occuring, 
+    and then compare them 
+    ''' 
+    count = 0 
+    prob_list = [] 
+    with open("out.txt", "r") as f:
+        text = f.readlines()
+        for line in text: 
+            print(f"Count: {count}", end="\r")
+            prob_list += [(calculate_probality(line), count)]
+            count += 1     
+        
+    print("\n")
+
+    with open('probabilities.txt', 'w') as f: 
+        f.write(str(sorted(prob_list)))
+            
+
+def calculate_probality(s): 
+    ''' 
+    Based on the frequencies of characters count 
+    in the english language, figures out the probabilit
+    of a particular string being generated 
+
+    Note: these probabilities should only be used for 
+    comparisons
+    ''' 
+    # First, iterate through all of the characters x`W`
+    # in the list 
+    char_count = defaultdict(int)
+    for char in s: 
+        char_count[char] += 1 
+    
+    probability = 0 
+    # Then, calculate the probability by iterating 
+    # through the dictionary keys 
+    for key in char_count.keys(): 
+
+        char_probability = character_frequencies[key]
+        if char_probability == 0: 
+            char_probability = 1
+
+        probability += char_count[key]*log10(char_probability) 
+
+    return probability
+
 def check_alpha_num(L): 
     ''' 
     Takes a list where each element is number. 
@@ -78,6 +136,7 @@ def check_alpha_num(L):
         if element < 32 or element > 127: 
             return False 
     return True 
+
     
 def do_xor(L, key_list):
     counter = 0
@@ -115,3 +174,4 @@ if __name__ == "__main__":
     breaker = XorBreaker()
 
     main(fname, key_size, min_val, max_val) 
+    compare_probabilities() 

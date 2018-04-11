@@ -1,6 +1,6 @@
 from collections import defaultdict
-import time 
 from math import log10 
+import time 
 
 class XorBreaker(): 
     def __init__(self):
@@ -16,6 +16,9 @@ class XorBreaker():
                               "p": .01929, "q": .00095, "r": .05987, "s": .06327, "t": .09056,
                               "u": .02758, "v": .00978, "w": .0236, "x": .00150, "y": .01974, 
                               "z": .00074}
+
+        # Create a default dict and copy over the characters from the 
+        # Character frequencies dictionary 
         self.character_frequencies = defaultdict(int)
         for key in character_frequencies_dict: 
             self.character_frequencies[key] = character_frequencies_dict[key]
@@ -32,13 +35,18 @@ character_frequencies_dict = {"a": .08167, "b": .01492, "c": .02782, "d": .04253
 character_frequencies = defaultdict(int)
 for key in character_frequencies_dict: 
     character_frequencies[key] = character_frequencies_dict[key]
+MAX_ASCII_RANGE = 500 
 
-def main(fname = "null", key_size=0, min_val=97, max_val=122): 
+def main(fname = "null", key_size_min=0, key_size_max=3, min_val=97, max_val=122): 
     ''' 
-    XOR Cipher Breaker 
+    XOR Cipher Breaker for ASCII text.
+    Takes in filename for input text, the keysize, and the 
+    minimum and maximum ascii values to check for the
+    key 
     ''' 
     open('out.txt', 'w').close() 
 
+    # TODO: catch error where file does not exist
     if fname != "null": 
         with open(fname, 'r') as f: 
             with open("out.txt", "w") as f2: 
@@ -59,37 +67,40 @@ def main(fname = "null", key_size=0, min_val=97, max_val=122):
 
                 MAX_VAL_LENGTH = len(str(MAX_VAL))
                 L = [int(x) for x in f.read().split(",")]
-                key = [MIN_VAL] * key_size
-                
-                while not done: 
+
+                # Go through all possible key sizes
+                for key_size in range(key_size_min, key_size_max, 1):
+
+                    key = [MIN_VAL] * key_size
                     
-                    count += 1
+                    while not done: 
+                        count += 1
+                        for key_index in range(len(key)): 
+                            key[key_index] += 1
+                            if key[key_index] > MAX_VAL: 
+                                if key_index == len(key) - 1: 
+                                    done = True 
+                                key[key_index] = MIN_VAL
+                                continue 
+                            else:  
+                                break 
+                        
+                        key_repr = ['0'*(MAX_VAL_LENGTH-len(str(x))) + str(x) for x in key]
 
-                    for key_index in range(len(key)): 
-                        key[key_index] += 1
-                        if key[key_index] > MAX_VAL: 
-                            if key_index == len(key) - 1: 
-                                done = True 
-                            key[key_index] = MIN_VAL
-                            continue 
-                        else:  
-                            break 
-                    
-                    key_repr = ['0'*(MAX_VAL_LENGTH-len(str(x))) + str(x) for x in key]
+                        dif = time.time() - st  
+                        try:
+                            thing = round(count / dif) 
+                        except: 
+                            thing = "NaN"
 
-                    dif = time.time() - st  
-                    try:
-                        thing = round(count / dif) 
-                    except: 
-                        thing = "NaN"
+                        output = do_xor(L, key)
+                        out = "".join([chr(x) for x in output])
+                        matches += 1 
+                        print(f"Key {key_repr}... {thing} Keys Per Second...{count} counts {matches} matches", end="\r")
 
-                    output = do_xor(L, key)
-                    out = "".join([chr(x) for x in output])
-                    matches += 1 
-                    print(f"Key {key_repr}... {thing} Keys Per Second...{count} counts {matches} matches", end="\r")
+                        f2.write(out)
+                        f2.write('\n')
 
-                    f2.write(out)
-                    f2.write('\n')
         
     print("\nDone!")
 
@@ -154,6 +165,11 @@ def check_alpha_num(L):
 
     
 def do_xor(L, key_list):
+    '''
+    Goes through each element in the input list and XORs it with the key.
+    If the list is longer than the key, the key will be repeadted as
+    necessary.     
+    '''
     counter = 0
     output = []
     num_keys = len(key_list)
@@ -165,7 +181,9 @@ if __name__ == "__main__":
     while True:
         try: 
             key_size = int(input("Key Size (Enter for Default): ")) 
-            if key_size <= 0: 
+            if key_size.strip() == "": 
+                key_size = 3
+            elif key_size < 0: 
                 raise ValueError()
         except: 
             print("Must be a number")
@@ -191,6 +209,8 @@ if __name__ == "__main__":
                 max_val = -1  
             else: 
                 max_val = int(max_val)
+                if max_val > MAX_ASCII_RANGE: 
+                    raise ValueError()
             break 
         except: 
             print("Must be a number")
